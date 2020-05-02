@@ -1,0 +1,6 @@
+import networkx as nx # Networkx Library\n",
+    "import matplotlib.pyplot as plt # Matplot lib"
+
+    "plt.subplot(111)\n",
+    "nx.draw_planar(G, with_labels = True)\n",
+    "plt.show()"
