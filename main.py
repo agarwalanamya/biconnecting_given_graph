@@ -136,6 +136,7 @@ def main():
         G.find_articulation_points()
         G.make_biconnected()
         print("Is the graph now Biconnected : ", G.isBiconnected(), "; As shown in figure 2")
+        print("The added edges are : ", G.final_added_edges)
         plt.figure(2)
         plot_graph(G)
 
