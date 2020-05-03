@@ -40,6 +40,9 @@ class PTPG:
         self.no_of_bcc = 0
         self.bcc_sets = [set() for i in range(self.node_count)]
         self.articulation_point_sets = [set() for i in range(self.node_count)]
+        self.added_edges = set()
+        self.removed_edges = set()
+        self.final_added_edges = set()
 
         """
         self.matrix = np.array(
@@ -1044,8 +1047,25 @@ class PTPG:
             nl = self.find_neighbors(self.articulation_points_value[i])
             for j in range(0, (len(nl) - 1)):
                 if not self.belong_in_same_block(nl[j], nl[j+1]):
+
                     self.matrix[nl[j]][nl[j+1]] = 1
-                    self.matrix[nl[j]][nl[j+1]] = 1
+                    self.matrix[nl[j+1]][nl[j]] = 1
+                    self.added_edges.add((nl[j], nl[j+1]))
+                    
+                    if (self.articulation_points_value[i], nl[j]) in self.added_edges or\
+                            (nl[j], self.articulation_points_value[i]) in self.added_edges:
+                        self.matrix[self.articulation_points_value[i]][nl[j]] = 0
+                        self.matrix[nl[j]][self.articulation_points_value[i]] = 0
+                        self.removed_edges.add((self.articulation_points_value[i], nl[j]))
+                        self.removed_edges.add((nl[j], self.articulation_points_value[i]))
+                    if (self.articulation_points_value[i], nl[j+1]) in self.added_edges or\
+                            (nl[j+1], self.articulation_points_value[i]) in self.added_edges:
+                        self.matrix[self.articulation_points_value[i]][nl[j+1]] = 0
+                        self.matrix[nl[j+1]][self.articulation_points_value[i]] = 0
+                        self.removed_edges.add((self.articulation_points_value[i], nl[j+1]))
+                        self.removed_edges.add((nl[j+1], self.articulation_points_value[i]))
+
+        self.final_added_edges = self.added_edges - self.removed_edges
 
     def remove_articulation_points_from_bcc_sets(self):
         for i in self.articulation_points_value:
